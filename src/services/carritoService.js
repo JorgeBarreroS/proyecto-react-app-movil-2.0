@@ -84,7 +84,7 @@ export const getCart = async () => {
 // Función para actualizar cantidad de un producto en el carrito
 export const updateCartItemQuantity = async (id_carrito, cantidad) => {
   try {
-      const response = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
+      const response = await fetch('http://10.0.2.2/corpfresh-php/carrito/carrito.php', {
           method: 'PUT',
           headers: {
               'Content-Type': 'application/json',
@@ -129,7 +129,7 @@ export const updateCartItemQuantity = async (id_carrito, cantidad) => {
 // Función para eliminar un producto del carrito
 export const removeFromCart = async (id_carrito) => {
   try {
-      const response = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
+      const response = await fetch('http://10.0.2.2/corpfresh-php/carrito/carrito.php', {
           method: 'DELETE',
           headers: {
               'Content-Type': 'application/json',
@@ -181,7 +181,7 @@ export const clearCart = async () => {
 
       const { email } = JSON.parse(authUser);
 
-      const response = await fetch('http://localhost/corpfresh-php/carrito/carrito.php', {
+      const response = await fetch('http://10.0.2.2/corpfresh-php/carrito/carrito.php', {
           method: 'DELETE',
           headers: {
               'Content-Type': 'application/json',

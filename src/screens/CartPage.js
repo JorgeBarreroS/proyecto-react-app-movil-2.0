@@ -464,15 +464,6 @@ const CartPage = () => {
                                     </Text>
                                 </TouchableOpacity>
 
-                                <View style={styles.paymentMethods}>
-                                    <Text style={styles.paymentMethodsText}>Aceptamos:</Text>
-                                    <View style={styles.paymentIcons}>
-                                        <Ionicons name="logo-cc-visa" size={24} color="#1434CB" />
-                                        <Ionicons name="logo-cc-mastercard" size={24} color="#EB001B" />
-                                        <Ionicons name="logo-cc-amex" size={24} color="#016FD0" />
-                                        <Ionicons name="logo-paypal" size={24} color="#003087" />
-                                    </View>
-                                </View>
                             </View>
                         </>
                     )}
