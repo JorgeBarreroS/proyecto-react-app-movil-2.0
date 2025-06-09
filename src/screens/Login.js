@@ -168,7 +168,7 @@ const Login = ({ navigation }) => {
 
                 if (userRole === 1) {
                   console.log('Navegando a Crud (admin)...');
-                  navigation.replace('Crud');
+                  navigation.replace('FetchProductos');
                 } else {
                   console.log('Navegando a Home (usuario normal)...');
                   navigation.replace('Home');
