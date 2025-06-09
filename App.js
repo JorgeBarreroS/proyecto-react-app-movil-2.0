@@ -13,6 +13,7 @@ import Home from './src/screens/Home';
 import ProductsPage from './src/screens/Productos';
 import VisualizarProducto from './src/screens/VisualizarProducto';
 import CartPage from './src/screens/CartPage';
+import SearchBar from './src/screens/Buscador';
 
 const Stack = createStackNavigator();
 
@@ -31,6 +32,7 @@ const App = () => {
           <Stack.Screen name="Products" component={ProductsPage} />
           <Stack.Screen name="VisualizarProducto" component={VisualizarProducto} />
           <Stack.Screen name="CartPage" component={CartPage} />
+          <Stack.Screen name="SearchBar" component={SearchBar} />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>

@@ -39,7 +39,7 @@ const Navbar = ({ navigation, currentUser = null, onLogout }) => {
 
   const menuItems = [
     { screen: 'Home', icon: 'home-outline', label: 'Inicio' },
-    { screen: 'Search', icon: 'search-outline', label: 'Buscar' }, // Nueva opción de búsqueda en el menú
+    { screen: 'SearchBar', icon: 'search-outline', label: 'Buscar' }, // Nueva opción de búsqueda en el menú
     { screen: 'Products', icon: 'shirt-outline', label: 'Productos' },
     { screen: 'Orders', icon: 'receipt-outline', label: 'Mis Pedidos' },
     { screen: 'Profile', icon: 'settings-outline', label: 'Mi Perfil' },
@@ -58,7 +58,7 @@ const Navbar = ({ navigation, currentUser = null, onLogout }) => {
             {/* Botón de búsqueda */}
             <TouchableOpacity
               style={styles.iconButton}
-              onPress={() => handleNavigation('Search')}
+              onPress={() => handleNavigation('SearchBar')}
             >
               <Ionicons name="search-outline" size={24} color="#fff" />
             </TouchableOpacity>
