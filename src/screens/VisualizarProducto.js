@@ -16,6 +16,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { addToCart } from '../services/carritoService';
 
 const VisualizarProducto = () => {
   const route = useRoute();
@@ -120,24 +121,18 @@ const VisualizarProducto = () => {
     }
 
     try {
-      const response = await fetch('http://10.0.2.2/corpfresh-php/carrito.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id_producto: producto.id_producto,
-          nombre: producto.nombre_producto,
-          precio: producto.precio_producto,
-          imagen: producto.imagen_producto,
-          cantidad,
-        }),
+      const result = await addToCart({
+        id_producto: producto.id_producto,
+        nombre: producto.nombre_producto,
+        precio: producto.precio_producto,
+        imagen: producto.imagen_producto,
+        cantidad: cantidad,
+        color: producto.color_producto || null,
+        talla: producto.talla || null
       });
 
-      const data = await response.json();
-
-      if (data.error) {
-        Alert.alert('Error', data.error);
+      if (result.error) {
+        Alert.alert('Error', result.error);
       } else {
         Alert.alert(
           'Producto agregado',
@@ -149,14 +144,14 @@ const VisualizarProducto = () => {
             },
             {
               text: 'Ver el carrito',
-              onPress: () => navigation.navigate('Cart'),
+              onPress: () => navigation.navigate('CartPage'),
             },
           ],
         );
       }
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'Hubo un problema con la solicitud. Intenta nuevamente.');
+      Alert.alert('Error', 'Hubo un problema al agregar al carrito');
     }
   };
 

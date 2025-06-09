@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useAuth } from '../services/AuthContext';
+import { getCart, updateCartItemQuantity, removeFromCart, clearCart } from '../services/carritoService';
 
 const CartPage = () => {
     const [productos, setProductos] = useState([]);
@@ -75,70 +76,45 @@ const CartPage = () => {
     };
 
     const fetchCarrito = async () => {
-        try {
-            if (!authState || !authState.email) {
-                setProductos([]);
-                setLoading(false);
-                return;
-            }
-
-            const response = await fetch(`http://10.0.2.2/corpfresh-php/carrito/carrito.php?usuario=${authState.email}`);
-            const textResponse = await response.text();
-
-            if (!response.ok) {
-                throw new Error(`Error ${response.status}: ${textResponse}`);
-            }
-
-            let data;
-            try {
-                data = JSON.parse(textResponse);
-            } catch (parseError) {
-                throw new Error(`La respuesta no es JSON válido: ${textResponse.substring(0, 100)}...`);
-            }
-
-            if (data.error) {
-                setProductos([]);
-            } else {
-                const productosConOfertas = await Promise.all(data.map(async (producto) => {
-                    const oferta = await fetchOfertaActiva(producto.id_producto);
-                    return {
-                        ...producto,
-                        ofertaActual: oferta,
-                        precioMostrado: oferta
-                            ? producto.precio * (1 - oferta.porcentaje_descuento / 100)
-                            : producto.precio
-                    };
-                }));
-
-                setProductos(productosConOfertas);
-                calcularTotal(productosConOfertas);
-
-                const stockData = {};
-                for (const producto of data) {
-                    const stock = await fetchProductStock(producto.id_producto);
-                    stockData[producto.id_producto] = stock !== null ? stock : MAX_PRODUCTO_CANTIDAD;
-                }
-                setStockLimits(stockData);
-
-                if (productos.length > 0 && productosConOfertas.length > 0) {
-                    const preciosCambiaron = productos.some((prod, index) => {
-                        return prod.precioMostrado !== productosConOfertas[index].precioMostrado;
-                    });
-
-                    if (preciosCambiaron) {
-                        Alert.alert(
-                            '¡Atención!',
-                            'Los precios de algunos productos han cambiado',
-                            [{ text: 'Entendido' }]
-                        );
-                    }
-                }
-            }
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
+      try {
+        if (!authState || !authState.email) {
+          setProductos([]);
+          setLoading(false);
+          return;
         }
+
+        const result = await getCart();
+
+        if (result.error) {
+          setError(result.error);
+          setProductos([]);
+        } else {
+          const productosConOfertas = await Promise.all(result.map(async (producto) => {
+            const oferta = await fetchOfertaActiva(producto.id_producto);
+            return {
+              ...producto,
+              ofertaActual: oferta,
+              precioMostrado: oferta
+                ? producto.precio * (1 - oferta.porcentaje_descuento / 100)
+                : producto.precio
+            };
+          })); // Aquí faltaba el paréntesis de cierre
+
+          setProductos(productosConOfertas);
+          calcularTotal(productosConOfertas);
+
+          const stockData = {};
+          for (const producto of result) {
+            const stock = await fetchProductStock(producto.id_producto);
+            stockData[producto.id_producto] = stock !== null ? stock : MAX_PRODUCTO_CANTIDAD;
+          }
+          setStockLimits(stockData);
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
     const calcularTotal = (items) => {
@@ -159,128 +135,98 @@ const CartPage = () => {
     }, [authState]);
 
     const actualizarCantidad = async (id_carrito, nuevaCantidad, id_producto) => {
-        if (nuevaCantidad < 1) {
-            Alert.alert('Error', 'La cantidad debe ser al menos 1');
-            return;
+      if (nuevaCantidad < 1) {
+        Alert.alert('Error', 'La cantidad debe ser al menos 1');
+        return;
+      }
+
+      const stockLimit = stockLimits[id_producto] || MAX_PRODUCTO_CANTIDAD;
+      if (nuevaCantidad > stockLimit) {
+        Alert.alert('Error', `No hay suficiente stock. Máximo disponible: ${stockLimit}`);
+        nuevaCantidad = stockLimit;
+      }
+
+      try {
+        const result = await updateCartItemQuantity(id_carrito, nuevaCantidad);
+
+        if (result.error) {
+          Alert.alert('Error', result.error);
+        } else {
+          const nuevosProductos = productos.map(prod =>
+            prod.id_carrito === id_carrito ? { ...prod, cantidad: nuevaCantidad } : prod
+          );
+          setProductos(nuevosProductos);
+          calcularTotal(nuevosProductos);
         }
-
-        const stockLimit = stockLimits[id_producto] || MAX_PRODUCTO_CANTIDAD;
-        if (nuevaCantidad > stockLimit) {
-            Alert.alert('Error', `No hay suficiente stock. Máximo disponible: ${stockLimit}`);
-            nuevaCantidad = stockLimit;
-        }
-
-        try {
-            const response = await fetch('http://10.0.2.2/corpfresh-php/carrito/carrito.php', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id_carrito, cantidad: nuevaCantidad })
-            });
-
-            if (!response.ok) {
-                throw new Error("Error al actualizar carrito");
-            }
-
-            const data = await response.json();
-            if (data.success) {
-                const nuevosProductos = productos.map(prod =>
-                    prod.id_carrito === id_carrito ? { ...prod, cantidad: nuevaCantidad } : prod
-                );
-                setProductos(nuevosProductos);
-                calcularTotal(nuevosProductos);
-            } else {
-                Alert.alert('Error', data.error || 'No se pudo actualizar el carrito');
-            }
-        } catch (err) {
-            Alert.alert('Error', err.message || 'Hubo un problema al actualizar el carrito');
-        }
+      } catch (err) {
+        Alert.alert('Error', err.message || 'Hubo un problema al actualizar el carrito');
+      }
     };
 
-    const eliminarProducto = async (id_carrito, productoNombre, productoImagen) => {
-        Alert.alert(
-            '¿Eliminar producto?',
-            `¿Estás seguro de eliminar ${productoNombre} de tu carrito?`,
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Sí, eliminar',
-                    onPress: async () => {
-                        try {
-                            const response = await fetch('http://10.0.2.2/corpfresh-php/carrito/carrito.php', {
-                                method: 'DELETE',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    id_carrito: id_carrito,
-                                    usuario: authState.email
-                                })
-                            });
 
-                            if (!response.ok) {
-                                throw new Error("Error al eliminar producto del carrito");
-                            }
+    const eliminarProducto = async (id_carrito, productoNombre) => {
+      Alert.alert(
+        '¿Eliminar producto?',
+        `¿Estás seguro de eliminar ${productoNombre} de tu carrito?`,
+        [
+          {
+            text: 'Cancelar',
+            style: 'cancel',
+          },
+          {
+            text: 'Sí, eliminar',
+            onPress: async () => {
+              try {
+                const result = await removeFromCart(id_carrito);
 
-                            const data = await response.json();
-                            if (data.success) {
-                                const nuevosProductos = productos.filter(prod => prod.id_carrito !== id_carrito);
-                                setProductos(nuevosProductos);
-                                const productoEliminado = productos.find(p => p.id_carrito === id_carrito);
-                                const nuevoTotal = total - ((productoEliminado.precioMostrado || productoEliminado.precio) * productoEliminado.cantidad);
-                                setTotal(nuevoTotal);
-
-                                Alert.alert('¡Eliminado!', 'El producto ha sido eliminado del carrito');
-                            } else {
-                                Alert.alert('Error', data.error || 'No se pudo eliminar el producto del carrito');
-                            }
-                        } catch (err) {
-                            Alert.alert('Error', err.message || 'Hubo un problema al eliminar el producto del carrito');
-                        }
-                    },
-                },
-            ]
-        );
+                if (result.error) {
+                  Alert.alert('Error', result.error);
+                } else {
+                  const nuevosProductos = productos.filter(prod => prod.id_carrito !== id_carrito);
+                  setProductos(nuevosProductos);
+                  const productoEliminado = productos.find(p => p.id_carrito === id_carrito);
+                  const nuevoTotal = total - ((productoEliminado.precioMostrado || productoEliminado.precio) * productoEliminado.cantidad);
+                  setTotal(nuevoTotal);
+                  Alert.alert('¡Eliminado!', 'El producto ha sido eliminado del carrito');
+                }
+              } catch (err) {
+                Alert.alert('Error', err.message || 'Hubo un problema al eliminar el producto del carrito');
+              }
+            },
+          },
+        ]
+      );
     };
 
     const vaciarCarrito = async () => {
-        Alert.alert(
-            '¿Vaciar carrito?',
-            "Se eliminarán todos los productos del carrito",
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Sí, vaciar',
-                    onPress: async () => {
-                        try {
-                            const response = await fetch('http://10.0.2.2/corpfresh-php/carrito/carrito.php', {
-                                method: 'DELETE',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ usuario: authState.email, vaciar: true })
-                            });
+      Alert.alert(
+        '¿Vaciar carrito?',
+        "Se eliminarán todos los productos del carrito",
+        [
+          {
+            text: 'Cancelar',
+            style: 'cancel',
+          },
+          {
+            text: 'Sí, vaciar',
+            onPress: async () => {
+              try {
+                const result = await clearCart();
 
-                            if (!response.ok) {
-                                throw new Error("Error al vaciar carrito");
-                            }
-
-                            const data = await response.json();
-                            if (data.success) {
-                                setProductos([]);
-                                setTotal(0);
-                                Alert.alert('Carrito vaciado', 'Se han eliminado todos los productos');
-                            } else {
-                                Alert.alert('Error', data.error || 'No se pudo vaciar el carrito');
-                            }
-                        } catch (err) {
-                            Alert.alert('Error', err.message || 'Hubo un problema al vaciar el carrito');
-                        }
-                    },
-                },
-            ]
-        );
+                if (result.error) {
+                  Alert.alert('Error', result.error);
+                } else {
+                  setProductos([]);
+                  setTotal(0);
+                  Alert.alert('Carrito vaciado', 'Se han eliminado todos los productos');
+                }
+              } catch (err) {
+                Alert.alert('Error', err.message || 'Hubo un problema al vaciar el carrito');
+              }
+            },
+          },
+        ]
+      );
     };
 
     const procederPago = () => {
