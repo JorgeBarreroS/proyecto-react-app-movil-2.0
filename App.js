@@ -18,7 +18,7 @@ import FetchProductos from './src/screens/Crud';
 import Checkout from './src/screens/Checkout';
 import MisPedidos from './src/screens/MisPedidos';
 import DetalleOrden from './src/screens/DetallePedido';
-
+import AboutPage from './src/screens/Nosotros'; // Cambiado el nombre aquí
 
 const Stack = createStackNavigator();
 
@@ -38,10 +38,11 @@ const App = () => {
           <Stack.Screen name="VisualizarProducto" component={VisualizarProducto} />
           <Stack.Screen name="CartPage" component={CartPage} />
           <Stack.Screen name="SearchBar" component={SearchBar} />
+          <Stack.Screen name="FetchProductos" component={FetchProductos} />
           <Stack.Screen name="Checkout" component={Checkout} />
           <Stack.Screen name="MisPedidos" component={MisPedidos} />
           <Stack.Screen name="DetalleOrden" component={DetalleOrden} />
-
+          <Stack.Screen name="Nosotros" component={AboutPage} />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>

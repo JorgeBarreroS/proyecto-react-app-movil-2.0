@@ -39,10 +39,12 @@ const Navbar = ({ navigation, currentUser = null, onLogout }) => {
 
   const menuItems = [
     { screen: 'Home', icon: 'home-outline', label: 'Inicio' },
-    { screen: 'SearchBar', icon: 'search-outline', label: 'Buscar' }, // Nueva opción de búsqueda en el menú
+    { screen: 'SearchBar', icon: 'search-outline', label: 'Buscar' },
     { screen: 'Products', icon: 'shirt-outline', label: 'Productos' },
     { screen: 'MisPedidos', icon: 'receipt-outline', label: 'Mis Pedidos' },
     { screen: 'Profile', icon: 'settings-outline', label: 'Mi Perfil' },
+    { screen: 'Nosotros', icon: 'people-outline', label: 'Nosotros' },
+    { screen: 'Contacto', icon: 'mail-outline', label: 'Contacto' },
   ];
 
   return (
