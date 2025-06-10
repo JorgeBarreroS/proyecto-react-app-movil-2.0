@@ -15,6 +15,7 @@ import VisualizarProducto from './src/screens/VisualizarProducto';
 import CartPage from './src/screens/CartPage';
 import SearchBar from './src/screens/Buscador';
 import FetchProductos from './src/screens/Crud';
+import Checkout from './src/screens/Checkout';
 
 const Stack = createStackNavigator();
 
@@ -34,7 +35,7 @@ const App = () => {
           <Stack.Screen name="VisualizarProducto" component={VisualizarProducto} />
           <Stack.Screen name="CartPage" component={CartPage} />
           <Stack.Screen name="SearchBar" component={SearchBar} />
-          <Stack.Screen name="FetchProductos" component={FetchProductos} />
+          <Stack.Screen name="Checkout" component={Checkout} />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>
