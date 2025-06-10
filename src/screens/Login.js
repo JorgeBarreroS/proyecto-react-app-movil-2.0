@@ -287,6 +287,15 @@ const Login = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
+          <View  style={styles.linksContainer}>
+                      {/* Botón para recuperar contraseña */}
+                      <TouchableOpacity onPress={() => navigation.navigate('ResetPassword')}
+                        style={styles.forgotPasswordButton}
+                      >
+                        <Text style={styles.linkBold}>¿Olvidaste tu contraseña?</Text>
+                      </TouchableOpacity>
+           </View>
+
           {/* Google Login - Comentado temporalmente */}
           {/*
           <View style={styles.socialLogin}>
