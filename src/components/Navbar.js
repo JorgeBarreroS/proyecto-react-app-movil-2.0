@@ -41,7 +41,7 @@ const Navbar = ({ navigation, currentUser = null, onLogout }) => {
     { screen: 'Home', icon: 'home-outline', label: 'Inicio' },
     { screen: 'SearchBar', icon: 'search-outline', label: 'Buscar' }, // Nueva opción de búsqueda en el menú
     { screen: 'Products', icon: 'shirt-outline', label: 'Productos' },
-    { screen: 'Orders', icon: 'receipt-outline', label: 'Mis Pedidos' },
+    { screen: 'MisPedidos', icon: 'receipt-outline', label: 'Mis Pedidos' },
     { screen: 'Profile', icon: 'settings-outline', label: 'Mi Perfil' },
   ];
 
