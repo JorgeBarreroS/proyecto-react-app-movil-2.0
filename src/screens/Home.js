@@ -306,7 +306,6 @@ const Home = ({ navigation }) => {
       `Precio: ${product.price}\n\n${product.description}`,
       [
         { text: 'Cerrar', style: 'cancel' },
-        { text: 'Ver Detalles', onPress: () => navigation.navigate('ProductDetail', { product }) }
       ]
     );
   };

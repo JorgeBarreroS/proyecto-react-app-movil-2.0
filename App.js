@@ -18,7 +18,8 @@ import FetchProductos from './src/screens/Crud';
 import Checkout from './src/screens/Checkout';
 import MisPedidos from './src/screens/MisPedidos';
 import DetalleOrden from './src/screens/DetallePedido';
-import AboutPage from './src/screens/Nosotros'; // Cambiado el nombre aquí
+import AboutPage from './src/screens/Nosotros';
+import ContactPage from './src/screens/Contacto'; // Añade esta importación
 
 const Stack = createStackNavigator();
 
@@ -43,6 +44,7 @@ const App = () => {
           <Stack.Screen name="MisPedidos" component={MisPedidos} />
           <Stack.Screen name="DetalleOrden" component={DetalleOrden} />
           <Stack.Screen name="Nosotros" component={AboutPage} />
+          <Stack.Screen name="Contacto" component={ContactPage} />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>
