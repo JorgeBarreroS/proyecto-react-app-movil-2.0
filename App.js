@@ -19,7 +19,8 @@ import Checkout from './src/screens/Checkout';
 import MisPedidos from './src/screens/MisPedidos';
 import DetalleOrden from './src/screens/DetallePedido';
 import AboutPage from './src/screens/Nosotros';
-import ContactPage from './src/screens/Contacto'; // Añade esta importación
+import ContactPage from './src/screens/Contacto';
+import Perfil from './src/screens/Perfil'; // Añade esta importación
 
 const Stack = createStackNavigator();
 
@@ -45,6 +46,7 @@ const App = () => {
           <Stack.Screen name="DetalleOrden" component={DetalleOrden} />
           <Stack.Screen name="Nosotros" component={AboutPage} />
           <Stack.Screen name="Contacto" component={ContactPage} />
+          <Stack.Screen name="Perfil" component={Perfil} />
         </Stack.Navigator>
       </NavigationContainer>
     </AuthProvider>

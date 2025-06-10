@@ -42,7 +42,7 @@ const Navbar = ({ navigation, currentUser = null, onLogout }) => {
     { screen: 'SearchBar', icon: 'search-outline', label: 'Buscar' },
     { screen: 'Products', icon: 'shirt-outline', label: 'Productos' },
     { screen: 'MisPedidos', icon: 'receipt-outline', label: 'Mis Pedidos' },
-    { screen: 'Profile', icon: 'settings-outline', label: 'Mi Perfil' },
+    { screen: 'Perfil', icon: 'settings-outline', label: 'Mi Perfil' },
     { screen: 'Nosotros', icon: 'people-outline', label: 'Nosotros' },
     { screen: 'Contacto', icon: 'mail-outline', label: 'Contacto' },
   ];
