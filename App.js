@@ -17,6 +17,8 @@ import SearchBar from './src/screens/Buscador';
 import FetchProductos from './src/screens/Crud';
 import Checkout from './src/screens/Checkout';
 import MisPedidos from './src/screens/MisPedidos';
+import DetalleOrden from './src/screens/DetallePedido';
+
 
 const Stack = createStackNavigator();
 
@@ -38,6 +40,7 @@ const App = () => {
           <Stack.Screen name="SearchBar" component={SearchBar} />
           <Stack.Screen name="Checkout" component={Checkout} />
           <Stack.Screen name="MisPedidos" component={MisPedidos} />
+          <Stack.Screen name="DetalleOrden" component={DetalleOrden} />
 
         </Stack.Navigator>
       </NavigationContainer>

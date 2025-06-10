@@ -394,7 +394,7 @@ const MisPedidos = () => {
                   <View style={styles.actionsSection}>
                     <TouchableOpacity
                       style={styles.actionButton}
-                      onPress={() => navigation.navigate('DetallePedido', { orderId: order.id })}
+                      onPress={() => navigation.navigate('DetalleOrden', { orderId: order.id })}
                     >
                       <Ionicons name="eye-outline" size={16} color="#007bff" />
                       <Text style={styles.actionButtonText}>Ver detalles</Text>
